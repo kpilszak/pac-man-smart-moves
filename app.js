@@ -54,4 +54,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let blinkyCurrentIndex = 197
     squares[blinkyCurrentIndex].classList.add('blinky')
+
+    // Get coordinates of PacMan or Blinky
+    function getCoordinates(index) {
+        return [index % width, Math.floor(index / width)]
+    }
+
+    console.log(getCoordinates(502))
+
+    function moveBlinky() {
+        const directions = [-1, +1, +width, -width]
+        let direction = directions[Math.floor(Math.random()) * directions.length]
+
+        let ghostTimerId = NaN
+        ghostTimerId = setInterval(function() {
+            if (!squares[blinkyCurrentIndex + direction].classList.contains('wall')) {
+                // Remove ghost class
+                squares[blinkyCurrentIndex].classList.remove('blinky')
+
+                // Check if the new space is closer
+                const [blinkyX, blinkyY] = getCoordinates(blinkyCurrentIndex)
+                const [pacmanX, pacmanY] = getCoordinates(pacmanCurrentIndex)
+                const [blinkyNewX, blinkyNewY] = getCoordinates(blinkyCurrentIndex + direction)
+
+                function isXCoordCloser() {
+                    if ((blinkyNewX - pacmanX) > (blinkyX - pacmanX)) {
+                        return true
+                    } else return false
+                }
+
+                function isYCoordCloser() {
+                    if ((blinkyNewY - pacmanY) > (blinkyY - pacmanY)) {
+                        return true
+                    } else return false
+                }
+
+                if (isXCoordCloser() || isYCoordCloser()) {
+                    blinkyCurrentIndex += direction
+                    squares[blinkyCurrentIndex].classList.add('blinky')
+                } else {
+                    squares[blinkyCurrentIndex].classList.add('blinky')
+                    direction = directions[Math.floor(Math.random() * directions.length)]
+                }
+
+                squares[blinkyCurrentIndex].classList.add('blinky')
+            } else {
+                direction = directions[Math.floor(Math.random() * directions.length)]
+
+                // Stop game when PacMan is eaten
+                if (squares[blinkyCurrentIndex].classList.contains('pac-man')) clearInterval(ghostTimerId)
+            }
+        }, 300)
+    }
+    moveBlinky()
 })
